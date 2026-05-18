@@ -492,14 +492,20 @@ with st.expander("Required columns and notes", expanded=False):
         """
     )
 
-uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
+uploaded_file = st.file_uploader("Upload CSV or Excel file", type=["csv", "xlsx"])
 
 if uploaded_file is not None:
     st.success(f"Loaded file: {uploaded_file.name}")
 
     if st.button("Process file", type="primary"):
         try:
-            input_df = pd.read_csv(uploaded_file, dtype=str)
+            if uploaded_file.name.lower().endswith(".csv"):
+                input_df = pd.read_csv(uploaded_file, dtype=str)
+            elif uploaded_file.name.lower().endswith(".xlsx"):
+                input_df = pd.read_excel(uploaded_file, dtype=str)
+            else:
+                raise ValueError("Unsupported file type. Please upload a CSV or XLSX file.")
+
             processed_df = process_dataframe(input_df)
             excel_bytes = dataframe_to_excel_bytes(processed_df)
             current_date = datetime.now().strftime("%m%d%Y")
