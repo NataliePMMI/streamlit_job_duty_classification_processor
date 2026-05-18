@@ -1,0 +1,43 @@
+name: Keep Streamlit Awake
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+jobs:
+  keep-awake:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install playwright
+          npx playwright install --with-deps chromium
+
+      - name: Visit Streamlit app
+        run: |
+          node <<'EOF'
+          const { chromium } = require('playwright');
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const page = await browser.newPage();
+
+            await page.goto('https://pmg-reporting-job-duty-classifier-processing.streamlit.app/', {
+              waitUntil: 'networkidle',
+              timeout: 120000
+            });
+
+            await page.waitForTimeout(15000);
+
+            console.log('Visited Streamlit app successfully.');
+            await browser.close();
+          })();
+          EOF
