@@ -484,7 +484,7 @@ with st.expander("Required columns and notes", expanded=False):
         """
         - Required columns:
           - `Title`
-          - `group_key` (Demographic_ID values such as `84`, `97`, `101`)
+          - `group_key` (Demographic_ID values such as HCP = `84`, PFW = `97`, PW = `101`)
         - Optional:
           - `Customer Id` (will be renamed to `Customer_ID` in the output)
         - Output:
